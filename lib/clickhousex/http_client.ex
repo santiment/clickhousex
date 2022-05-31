@@ -1,6 +1,6 @@
 defmodule Clickhousex.HTTPClient do
   defmodule Response do
-    defstruct ref: nil, codec_state: nil, status: nil, error_buffer: [], complete?: false
+    defstruct ref: nil, codec_state: nil, status: nil, error_buffer: [], resp_headers: [], complete?: false
 
     @codec Application.get_env(:clickhousex, :codec, Clickhousex.Codec.JSON)
     def new(ref) do
@@ -31,6 +31,12 @@ defmodule Clickhousex.HTTPClient do
          )
          when status != 200 do
       %{response | error_buffer: [error_buffer, data]}
+    end
+
+    defp append(%__MODULE__{codec_state: state, ref: ref} = response, {:headers, ref, headers}) do
+      %{
+        response | resp_headers: headers ++ response.resp_headers
+      }
     end
 
     defp append(%__MODULE__{codec_state: state, ref: ref} = response, {:data, ref, data}) do
@@ -107,7 +113,8 @@ defmodule Clickhousex.HTTPClient do
 
   defp decode_response(conn, %Query{type: :select}, %Response{} = response) do
     case Response.decode(response) do
-      {:ok, %{column_names: columns, rows: rows}} -> {:ok, conn, {:selected, columns, rows}}
+      {:ok, %{column_names: columns, rows: rows}} ->
+        {:ok, conn, {:selected, columns, rows, response.resp_headers}}
       {:error, error} -> {:error, conn, error.reason}
     end
   end

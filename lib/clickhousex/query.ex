@@ -29,6 +29,8 @@ defimpl DBConnection.Query, for: Clickhousex.Query do
 
   @values_regex ~r/VALUES/i
   @select_query_regex ~r/\bSELECT\b/i
+  @show_query_regex ~r/\bSHOW\b/i
+  @describe_query_regex ~r/\bDESCRIBE\b/i
   @insert_query_regex ~r/\bINSERT\b/i
   @alter_query_regex ~r/\bALTER\b/i
 
@@ -86,7 +88,11 @@ defimpl DBConnection.Query, for: Clickhousex.Query do
   end
 
   defp query_type(statement) do
+    # Treat `SHOW` and `DESCRIBE` queries the same as `SELECT`. This means that the query
+    # will have `FORMAT JSONCompact` appended to it and they can be parsed as JSON
     with {:select, false} <- {:select, Regex.match?(@select_query_regex, statement)},
+         {:select, false} <- {:select, Regex.match?(@show_query_regex, statement)},
+         {:select, false} <- {:select, Regex.match?(@describe_query_regex, statement)},
          {:insert, false} <- {:insert, Regex.match?(@insert_query_regex, statement)},
          {:alter, false} <- {:alter, Regex.match?(@alter_query_regex, statement)} do
       :unknown

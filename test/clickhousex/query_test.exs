@@ -16,8 +16,14 @@ defmodule Clickhousex.QueryTest do
     assert {:ok, %Result{command: :updated, num_rows: 1}} =
              insert(ctx, "INSERT INTO {{table}} VALUES ('qwerty')", [])
 
-    assert {:ok, %Result{command: :selected, columns: ["name"], num_rows: 1, rows: [["qwerty"]]}} =
-             select_all(ctx)
+    assert {:ok,
+            %Result{
+              command: :selected,
+              columns: ["name"],
+              column_types: ["String"],
+              num_rows: 1,
+              rows: [["qwerty"]]
+            }} = select_all(ctx)
   end
 
   test "parametrized queries", ctx do
@@ -40,6 +46,7 @@ defmodule Clickhousex.QueryTest do
             %Result{
               command: :selected,
               columns: ["id", "name"],
+              column_types: ["Int32", "String"],
               num_rows: 1,
               rows: [[1, "abyrvalg"]]
             }} = select_all(ctx)
@@ -258,6 +265,7 @@ defmodule Clickhousex.QueryTest do
             %Result{
               command: :selected,
               columns: ["id", "name"],
+              column_types: ["Int32", "String"],
               num_rows: 2,
               rows: rows
             }} = select_all(ctx)

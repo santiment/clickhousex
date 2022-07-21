@@ -16,9 +16,10 @@ defmodule Clickhousex.Result do
           summary: Map.t() | nil,
           command: atom,
           columns: [String.t()] | nil,
+          column_types: [String.t()] | nil,
           rows: [[term] | binary] | nil,
           num_rows: integer | :undefined
         }
 
-  defstruct query_id: nil, summary: nil, command: nil, columns: nil, rows: nil, num_rows: :undefined
+  defstruct query_id: nil, summary: nil, command: nil, columns: nil, column_types: nil, rows: nil, num_rows: :undefined
 end

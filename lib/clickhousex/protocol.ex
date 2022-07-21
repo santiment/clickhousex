@@ -39,7 +39,7 @@ defmodule Clickhousex.Protocol do
     {:ok, conn} = Client.connect(scheme, hostname, port)
 
     case Client.request(conn, @ping_query, @ping_params, timeout, username, password, database) do
-      {:ok, conn, {:selected, _columns, _rows, _resp_headers}} ->
+      {:ok, conn, {:selected, _column_names, _column_types, _rows, _resp_headers}} ->
         {
           :ok,
           %__MODULE__{
@@ -139,7 +139,7 @@ defmodule Clickhousex.Protocol do
       {:error, conn, reason} ->
         {:error, reason, %{state | conn: conn}}
 
-      {:ok, conn, {:selected, columns, rows, resp_headers}} ->
+      {:ok, conn, {:selected, column_names, column_types, rows, resp_headers}} ->
         query_id = (for {"x-clickhouse-query-id", value} <- resp_headers, do: value) |> List.first()
         summary = (for {"x-clickhouse-summary", value} <- resp_headers, do: value) |> List.first()
 
@@ -148,7 +148,8 @@ defmodule Clickhousex.Protocol do
           query,
           %Clickhousex.Result{
             command: :selected,
-            columns: columns,
+            columns: column_names,
+            column_types: column_types,
             rows: rows,
             num_rows: Enum.count(rows),
             query_id: query_id,

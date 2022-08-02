@@ -2,6 +2,7 @@ defmodule Clickhousex.Codec.JSON do
   alias Clickhousex.Codec
   @behaviour Codec
 
+  @impl Codec
   defdelegate encode(query, replacements, params), to: Codec.Values
 
   @impl Codec

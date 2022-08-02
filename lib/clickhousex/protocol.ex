@@ -3,7 +3,7 @@ defmodule Clickhousex.Protocol do
 
   use DBConnection
 
-  alias Clickhousex.HTTPClient, as: Client
+  alias Clickhousex.HTTPClient.Mint, as: Client
   alias Clickhousex.Error
 
   defstruct conn_opts: [], base_address: "", conn: nil

@@ -1,7 +1,7 @@
 defmodule Clickhousex.Mixfile do
   use Mix.Project
 
-  def project do
+  def project() do
     [
       app: :clickhousex,
       version: "0.5.0",
@@ -15,18 +15,18 @@ defmodule Clickhousex.Mixfile do
   # Run "mix help compile.app" to learn about applications.
   def application do
     [
-      applications: [:logger, :db_connection]
+      applications: [:logger, :db_connection],
+      # Should not be needed, but the warnings are everywhere
+      extra_applications: [:jason, :tesla, :mint]
     ]
   end
 
   # Run "mix help deps" to learn about dependencies.
-  defp deps do
+  def deps() do
     [
       {:db_connection, "~> 2.2"},
-      # TODO:
-      # The commit in mint drastically reduces string allocation and improves perf
-      # When they release, bump this to the released version
       {:mint, "~> 1.0"},
+      {:tesla, "~> 1.4"},
       {:castore, "~> 0.1"},
       {:jason, "~> 1.2"},
       {:ex_doc, "~> 0.19", only: :dev},
@@ -34,7 +34,7 @@ defmodule Clickhousex.Mixfile do
     ]
   end
 
-  defp package do
+  defp package() do
     [
       name: "clickhousex",
       description: description(),
@@ -44,11 +44,11 @@ defmodule Clickhousex.Mixfile do
     ]
   end
 
-  defp description do
+  defp description() do
     "ClickHouse driver for Elixir (uses HTTP)."
   end
 
-  defp maintainers do
+  defp maintainers() do
     ["Roman Chudov", "Konstantin Grabar", "Ivan Zinoviev", "Evgeniy Shurmin", "Alexey Lukyanov"]
   end
 end

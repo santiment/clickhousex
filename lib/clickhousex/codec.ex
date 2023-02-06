@@ -3,7 +3,12 @@ defmodule Clickhousex.Codec do
   @type query :: Clickhousex.Query.t()
   @type param :: any
   @type param_replacements :: iodata
-  @type select_response :: %{column_names: [String.t()], column_types: [String.t()], rows: [row], row_count: non_neg_integer}
+  @type select_response :: %{
+          column_names: [String.t()],
+          column_types: [String.t()],
+          rows: [row],
+          row_count: non_neg_integer
+        }
   @type state :: any
 
   @callback response_format() :: String.t()

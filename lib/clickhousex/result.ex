@@ -21,5 +21,11 @@ defmodule Clickhousex.Result do
           num_rows: integer | :undefined
         }
 
-  defstruct query_id: nil, summary: nil, command: nil, columns: nil, column_types: nil, rows: nil, num_rows: :undefined
+  defstruct query_id: nil,
+            summary: nil,
+            command: nil,
+            columns: nil,
+            column_types: nil,
+            rows: nil,
+            num_rows: :undefined
 end

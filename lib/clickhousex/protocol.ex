@@ -140,8 +140,10 @@ defmodule Clickhousex.Protocol do
         {:error, reason, %{state | conn: conn}}
 
       {:ok, conn, {:selected, column_names, column_types, rows, resp_headers}} ->
-        query_id = (for {"x-clickhouse-query-id", value} <- resp_headers, do: value) |> List.first()
-        summary = (for {"x-clickhouse-summary", value} <- resp_headers, do: value) |> List.first()
+        query_id =
+          for({"x-clickhouse-query-id", value} <- resp_headers, do: value) |> List.first()
+
+        summary = for({"x-clickhouse-summary", value} <- resp_headers, do: value) |> List.first()
 
         {
           :ok,

@@ -7,7 +7,7 @@ defmodule Clickhousex.HTTPClient do
               resp_headers: [],
               complete?: false
 
-    @codec Application.get_env(:clickhousex, :codec, Clickhousex.Codec.JSON)
+    @codec Application.compile_env(:clickhousex, :codec, Clickhousex.Codec.JSON)
     def new(ref) do
       codec_state = @codec.new()
 
@@ -38,7 +38,7 @@ defmodule Clickhousex.HTTPClient do
       %{response | error_buffer: [error_buffer, data]}
     end
 
-    defp append(%__MODULE__{codec_state: state, ref: ref} = response, {:headers, ref, headers}) do
+    defp append(%__MODULE__{codec_state: _, ref: ref} = response, {:headers, ref, headers}) do
       %{
         response
         | resp_headers: headers ++ response.resp_headers
@@ -125,8 +125,8 @@ defmodule Clickhousex.HTTPClient do
       {:error, %{reason: reason}} ->
         {:error, conn, reason}
 
-        {:error, error} ->
-          {:error, conn, error}
+      {:error, error} ->
+        {:error, conn, error}
     end
   end
 
@@ -158,8 +158,13 @@ defmodule Clickhousex.HTTPClient do
     end
   end
 
-  defp maybe_append_format(%Query{type: :select}, request) do
-    [request.post_data, " FORMAT ", Response.format()]
+  defp maybe_append_format(%Query{type: :select, statement: statement}, request) do
+    # If the string contains `FORMAT JSONCompact`, `FORMAT JSONEachRow`, etc.
+    # Do not append the format as it has already been added by the client
+    case String.match?(statement, ~r/FORMAT JSON/i) do
+      true -> [request.post_data]
+      false -> [request.post_data, "\nFORMAT #{Response.format()}"]
+    end
   end
 
   defp maybe_append_format(_, request) do

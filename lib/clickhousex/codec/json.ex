@@ -32,7 +32,8 @@ defmodule Clickhousex.Codec.JSON do
         column_types = Enum.map(meta, & &1["type"])
         rows = decode_rows(data, column_types)
 
-        {:ok, %{column_names: column_names, column_types: column_types, rows: rows, count: row_count}}
+        {:ok,
+         %{column_names: column_names, column_types: column_types, rows: rows, count: row_count}}
     end
   end
 

@@ -68,7 +68,8 @@ defmodule Clickhousex.HTTPClient do
   @req_headers [{"Content-Type", "text/plain"}]
 
   def connect(scheme, host, port) do
-    Mint.HTTP.connect(String.to_existing_atom(scheme), host, port, mode: :passive)
+    scheme = if is_binary(scheme), do: String.to_existing_atom(scheme), else: scheme
+    Mint.HTTP.connect(scheme, host, port, mode: :passive)
   end
 
   def disconnect(conn) do

@@ -11,7 +11,7 @@ defmodule Clickhousex.Error do
           constraint_violations: Keyword.t()
         }
 
-  def exception(%Mint.TransportError{reason: reason}) do
+  def exception(%{__struct__: Mint.TransportError, reason: reason}) do
     %__MODULE__{message: "Transport Error: #{inspect(reason)}"}
   end
 
